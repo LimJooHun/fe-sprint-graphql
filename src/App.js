@@ -1,25 +1,66 @@
-import logo from './logo.svg';
-import './App.css';
+import logo from "./logo.svg";
+import "./App.css";
+import React, { useEffect } from "react";
+import { graphql } from "@octokit/graphql";
+const token = "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";
+
+async function graph() {
+  const { repository } = await graphql(
+    `
+      {
+        repository(owner: "codestates-seb", name: "agora-states-fe") {
+          discussions(first: 10) {
+            edges {
+              node {
+                id
+                title
+                createdAt
+              }
+            }
+          }
+        }
+      }
+    `,
+    {
+      headers: {
+        authorization: `token ${token}`,
+      },
+    }
+  );
+  return [repository];
+}
 
 function App() {
-  return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
-  );
+  useEffect(() => {
+    graph().then((res) => console.log(res), []);
+  });
+
+  // const token = "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";
+  // useEffect(() => {
+  //   graphql(
+  //     `
+  //       {
+  //         repository(owner: "codestates-seb", name: "agora-states-fe") {
+  //           discussions(first: 10) {
+  //             edges {
+  //               node {
+  //                 id
+  //                 title
+  //                 createdAt
+  //               }
+  //             }
+  //           }
+  //         }
+  //       }
+  //     `,
+  //     {
+  //       headers: {
+  //         authorization: `token ${token}`,
+  //       },
+  //     }
+  //   ).then((res) => console.log(res.repository));
+  // }, []);
+  // return <div className="App">111</div>;
 }
 
 export default App;
